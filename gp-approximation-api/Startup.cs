@@ -29,7 +29,12 @@ namespace gp_approximation_api
             services.AddControllers();
             services.AddCors();
 
+            //tech debt
             services.AddSingleton<GpApproximationManager>();
+
+            services.AddSingleton<IApproximationTaskManager, ApproximationTaskManager>();
+            services.AddTransient<IApproximationProvider, ApproximationProvider>();
+            services.AddTransient<IDatafileManager, DatafileManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

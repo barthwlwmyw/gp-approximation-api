@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace gp_approximation_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class TestController : ControllerBase
     {
