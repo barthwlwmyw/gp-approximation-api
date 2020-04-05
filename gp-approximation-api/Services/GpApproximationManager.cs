@@ -17,12 +17,15 @@ namespace gp_approximation_api.Services
     public class ApproximationTaskManager : IApproximationTaskManager
     {
         private readonly ILogger<ApproximationTaskManager> _logger;
+
+        private readonly IApproximationProvider _approximationProvider;
         private IList<ApproximationTask> _approximationTasks { get; set; }
 
-        public ApproximationTaskManager(ILogger<ApproximationTaskManager> logger)
+        public ApproximationTaskManager(ILogger<ApproximationTaskManager> logger, IApproximationProvider approximationProvider)
         {
             _logger = logger;
             _approximationTasks = new List<ApproximationTask>();
+            _approximationProvider = approximationProvider;
         }
 
         public Guid CreateTask(TaskParams taskParams)
@@ -46,8 +49,21 @@ namespace gp_approximation_api.Services
         {
             //TODO: implementation
             _logger.LogDebug($"Approximation task fired, GUID: {taskGuid}");
+
+            //test implementation:
+            Task.Run(() => _approximationProvider.Approximate(testGuidlessStatusUpdate));
+        
         }
 
+        private void testGuidlessStatusUpdate(int progress)
+        {
+            _approximationTasks.First().Progress = progress;
+        }
+
+        private void UpdateTaskStatus(Guid taskGuid, int progress)
+        {
+
+        }
     }
 
     public class TaskParams

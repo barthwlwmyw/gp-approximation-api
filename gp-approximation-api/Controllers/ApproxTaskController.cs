@@ -12,13 +12,11 @@ namespace gp_approximation_api.Controllers
     [ApiController]
     public class ApproxTaskController : ControllerBase
     {
-        private readonly ILogger<ApproxTaskController> _logger;
         private readonly IDatafileManager _datafileManager;
         private readonly IApproximationTaskManager _approximationTaskManager;
 
-        public ApproxTaskController(ILogger<ApproxTaskController> logger, IDatafileManager datafileManager, IApproximationTaskManager approximationTaskManager)
+        public ApproxTaskController(IDatafileManager datafileManager, IApproximationTaskManager approximationTaskManager)
         {
-            _logger = logger;
             _datafileManager = datafileManager;
             _approximationTaskManager = approximationTaskManager;
         }
@@ -33,6 +31,8 @@ namespace gp_approximation_api.Controllers
             var newTaskParams = new TaskParams { DataFilePath = datafilePath };
 
             var taskGuid = _approximationTaskManager.CreateTask(newTaskParams);
+
+            Task.Run(() => _approximationTaskManager.RunTask(Guid.NewGuid()));
 
             return Ok(new { taskGuid });
         }

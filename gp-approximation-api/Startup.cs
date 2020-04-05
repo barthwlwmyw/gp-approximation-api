@@ -31,6 +31,7 @@ namespace gp_approximation_api
 
             //tech debt
             services.AddSingleton<GpApproximationManager>();
+            //~tech debt
 
             services.AddSingleton<IApproximationTaskManager, ApproximationTaskManager>();
             services.AddTransient<IApproximationProvider, ApproximationProvider>();
