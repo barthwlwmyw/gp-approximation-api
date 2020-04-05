@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace gp_approximation_api.Utils
 {
-    public delegate void onApproximationStartedCallback();
+    public delegate void OnApproximationStartedCallback();
 
-    public delegate void onApproximationProgressUpdateCallback(int approximationProgress);
+    public delegate void OnApproximationProgressUpdateCallback(int approximationProgress);
 
-    public delegate void onApproximationFinishedCallback();
+    public delegate void OnApproximationFinishedCallback(StringBuilder taskGuid);
 
-    public delegate void onApproximationFailedCallback();
+    public delegate void OnApproximationFailedCallback();
 }

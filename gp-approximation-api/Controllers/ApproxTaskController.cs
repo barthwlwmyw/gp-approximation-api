@@ -32,7 +32,7 @@ namespace gp_approximation_api.Controllers
 
             var taskGuid = _approximationTaskManager.CreateTask(newTaskParams);
 
-            Task.Run(() => _approximationTaskManager.RunTask(Guid.NewGuid()));
+            Task.Run(() => _approximationTaskManager.RunTask(taskGuid));
 
             return Ok(new { taskGuid });
         }
