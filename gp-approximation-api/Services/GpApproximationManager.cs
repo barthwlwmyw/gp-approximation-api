@@ -59,16 +59,16 @@ namespace gp_approximation_api.Services
         
         }
 
-        private void UpdateTaskStatus(int progress)
+        private void UpdateTaskStatus(StringBuilder taskGuid, int progress)
         {
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}");
-            // _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().Progress = progress;
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, gui");
+             _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().Progress = progress;
         }
 
         private void FinalizeTask(StringBuilder taskGuid)
         {
             Console.WriteLine($"Finalize task callback called: {taskGuid}");
-            // _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().IsDone = true;
+            _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().IsDone = true;
         }
     }
 

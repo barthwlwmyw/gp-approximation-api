@@ -34,7 +34,7 @@ namespace gp_approximation_api.Controllers
 
             Task.Run(() => _approximationTaskManager.RunTask(taskGuid));
 
-            return Ok(new { taskGuid });
+            return Ok(new { taskGuid, progress = 0 });
         }
 
         [HttpGet("api/[controller]/{taskGuid?}")]
