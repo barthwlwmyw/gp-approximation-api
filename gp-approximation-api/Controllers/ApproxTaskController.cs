@@ -22,19 +22,19 @@ namespace gp_approximation_api.Controllers
         }
 
         [HttpPost("api/[controller]")]
-        public IActionResult Create()
+        public IActionResult Create([FromForm] IFormFile file, [FromForm] string algorithmParams)
         {
-            FormFile receivedFile = null;
+            IFormFile receivedFile = file;
+
+            var algorithmParamsXXX = algorithmParams;
 
             var datafilePath = _datafileManager.SaveFile(receivedFile);
-
             var newTaskParams = new TaskParams { DataFilePath = datafilePath };
-
             var taskGuid = _approximationTaskManager.CreateTask(newTaskParams);
 
             Task.Run(() => _approximationTaskManager.RunTask(taskGuid));
 
-            return Ok(new { taskGuid, progress = 0 });
+            return Ok(new { taskGuid, progress = 1 });
         }
 
         [HttpGet("api/[controller]/{taskGuid?}")]
@@ -52,5 +52,13 @@ namespace gp_approximation_api.Controllers
 
             return Ok(approximationTasks);
         }
+    }
+
+    public class Params
+    {
+        public int PopulationSize { get; set; }
+        public int GenerationsNumber { get; set; }
+        public double CrossoverProbability { get; set; }
+        public double MutationProbability { get; set; }
     }
 }

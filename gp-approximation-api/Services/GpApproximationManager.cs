@@ -33,7 +33,7 @@ namespace gp_approximation_api.Services
         {
             var taskGuid = Guid.NewGuid();
 
-            var newTask = new ApproximationTask { TaskGuid = taskGuid, DataFilePath = taskParams.DataFilePath };
+            var newTask = new ApproximationTask { TaskGuid = taskGuid, DataFilePath = taskParams.DataFilePath, Progress=1 };
 
             _approximationTasks.Add(newTask);
 
