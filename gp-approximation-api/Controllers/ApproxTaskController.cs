@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using gp_approximation_api.Services;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using gp_approximation_api.Model;
 
 namespace gp_approximation_api.Controllers
 {
@@ -22,15 +25,14 @@ namespace gp_approximation_api.Controllers
         }
 
         [HttpPost("api/[controller]")]
-        public IActionResult Create([FromForm] IFormFile file, [FromForm] string algorithmParams)
+        public async Task<IActionResult> Create([FromForm] IFormFile file, [FromForm] string algorithmParams)
         {
             IFormFile receivedFile = file;
 
-            var algorithmParamsXXX = algorithmParams;
+            var deserializedParams = JsonSerializer.Deserialize<AlgorithmParams>(algorithmParams);
 
-            var datafilePath = _datafileManager.SaveFile(receivedFile);
-            var newTaskParams = new TaskParams { DataFilePath = datafilePath };
-            var taskGuid = _approximationTaskManager.CreateTask(newTaskParams);
+            var datafilePath = await _datafileManager.SaveFile(receivedFile);
+            var taskGuid =  _approximationTaskManager.CreateTask(datafilePath);
 
             Task.Run(() => _approximationTaskManager.RunTask(taskGuid));
 
@@ -52,13 +54,5 @@ namespace gp_approximation_api.Controllers
 
             return Ok(approximationTasks);
         }
-    }
-
-    public class Params
-    {
-        public int PopulationSize { get; set; }
-        public int GenerationsNumber { get; set; }
-        public double CrossoverProbability { get; set; }
-        public double MutationProbability { get; set; }
     }
 }

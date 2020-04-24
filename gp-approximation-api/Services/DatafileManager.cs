@@ -1,18 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace gp_approximation_api.Services
 {
     public interface IDatafileManager
     {
-        string SaveFile(IFormFile file);
+        Task<string> SaveFile(IFormFile file);
     }
     public class DatafileManager : IDatafileManager
     {
-        public string SaveFile(IFormFile file)
+        public async Task<string> SaveFile(IFormFile file)
         {
-            //TODO: implementation
+            using (var stream = File.Create("myFile.txt"))
+            {
+                await file.CopyToAsync(stream);
+            }
 
-            return "filepath";
+            return "myFile.txt";
         }
     }
 }
