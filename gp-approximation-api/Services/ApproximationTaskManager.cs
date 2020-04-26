@@ -75,23 +75,4 @@ namespace gp_approximation_api.Services
             _taskRepository.FinalizeTask(Guid.Parse(taskGuid.ToString()));
         }
     }
-
-    
-
-    public class GpApproximationManager
-    {
-        public GpApproximationManager()
-        {
-            ApproximationTasks = new List<ApproximationTask>();
-        }
-
-        public static List<ApproximationTask> ApproximationTasks { get; set; }
-
-        public static void UpdateTaskProgress(Guid taskGuid, int progress)
-        {
-            ApproximationTasks.Where(at => at.TaskGuid == taskGuid).FirstOrDefault().TaskProgress = progress;
-        }
-    }
-
-    
 }

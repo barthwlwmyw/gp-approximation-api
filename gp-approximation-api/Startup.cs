@@ -18,15 +18,10 @@ namespace gp_approximation_api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddCors();
-
-            //tech debt
-            services.AddSingleton<GpApproximationManager>();
-            //~tech debt
 
             services.AddTransient<IApproximationTaskManager, ApproximationTaskManager>();
             services.AddTransient<IApproximationProvider, ApproximationProvider>();
@@ -34,7 +29,6 @@ namespace gp_approximation_api
             services.AddSingleton<IApproximationTaskRepository, ApproximationTaskRepository>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(options => options.WithOrigins("http://localhost:3000")
