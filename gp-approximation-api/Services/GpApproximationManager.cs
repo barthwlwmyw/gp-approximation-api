@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using gp_approximation_api.Model;
+using gp_approximation_api.Repos;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace gp_approximation_api.Services
 {
     public interface IApproximationTaskManager
     {
-        Guid CreateTask(string dataFilePath);
+        Guid CreateTask(Guid taskGuid, string dataFilePath);
         void RunTask(Guid taskGuid);
         IList<ApproximationTask> GetTasks();
         ApproximationTask GetTask(Guid taskGuid);
@@ -18,36 +20,37 @@ namespace gp_approximation_api.Services
     public class ApproximationTaskManager : IApproximationTaskManager
     {
         private readonly ILogger<ApproximationTaskManager> _logger;
-
         private readonly IApproximationProvider _approximationProvider;
+        private readonly IApproximationTaskRepository _taskRepository;
+
         private IList<ApproximationTask> _approximationTasks { get; set; }
 
-        public ApproximationTaskManager(ILogger<ApproximationTaskManager> logger, IApproximationProvider approximationProvider)
+
+        public ApproximationTaskManager(ILogger<ApproximationTaskManager> logger, IApproximationProvider approximationProvider, IApproximationTaskRepository taskRepository)
         {
             _logger = logger;
             _approximationTasks = new List<ApproximationTask>();
             _approximationProvider = approximationProvider;
+            _taskRepository = taskRepository;
         }
 
-        public Guid CreateTask(string dataFilePath)
+        public Guid CreateTask(Guid taskGuid, string dataFilePath)
         {
-            var taskGuid = Guid.NewGuid();
+            var newTask = new ApproximationTask { TaskGuid = taskGuid, DataFilePath = dataFilePath };
 
-            var newTask = new ApproximationTask { TaskGuid = taskGuid, DataFilePath = dataFilePath, Progress=1 };
-
-            _approximationTasks.Add(newTask);
-
-            _logger.LogDebug($"Approximation task created, GUID: {taskGuid}");
+            _taskRepository.AddTask(newTask);
 
             return newTask.TaskGuid;
         }
 
-        public IList<ApproximationTask> GetTasks() => _approximationTasks.ToList();
+        public IList<ApproximationTask> GetTasks() => _taskRepository.GetAllTasks();
 
-        public ApproximationTask GetTask(Guid taskGuid) => _approximationTasks.Where(at => at.TaskGuid == taskGuid).Single();
+        public ApproximationTask GetTask(Guid taskGuid) => _taskRepository.GetApproximationTask(taskGuid);
 
         public void RunTask(Guid taskGuid)
         {
+            var task = _taskRepository.GetApproximationTask(taskGuid);
+
             //TODO: implementation
             _logger.LogDebug($"Approximation task fired, GUID: {taskGuid}");
 
@@ -55,32 +58,25 @@ namespace gp_approximation_api.Services
             Task.Run(() => _approximationProvider.Approximate(
                 UpdateTaskStatus,
                 FinalizeTask,
-                taskGuid));
+                taskGuid,
+                task.DataFilePath));
         
         }
 
         private void UpdateTaskStatus(StringBuilder taskGuid, int progress)
         {
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, gui");
-             _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().Progress = progress;
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}");
+            _taskRepository.UpdateTaskProgress(Guid.Parse(taskGuid.ToString()), progress);
         }
 
         private void FinalizeTask(StringBuilder taskGuid)
         {
             Console.WriteLine($"Finalize task callback called: {taskGuid}");
-            _approximationTasks.Where(at => at.TaskGuid == Guid.Parse(taskGuid.ToString())).First().IsDone = true;
+            _taskRepository.FinalizeTask(Guid.Parse(taskGuid.ToString()));
         }
     }
 
-    public class ApproximationTask
-    {
-        public Guid TaskGuid { get; set; }
-        public int TaskProgress { get; set; }
-        public string DataFilePath { get; set; }
-        public string ResultFilePath { get; set; }
-        public bool IsDone { get; set; }
-        public int Progress { get; set; }
-    }
+    
 
     public class GpApproximationManager
     {

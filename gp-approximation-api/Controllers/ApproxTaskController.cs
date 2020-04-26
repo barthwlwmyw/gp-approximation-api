@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using gp_approximation_api.Services;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using gp_approximation_api.Model;
 
 namespace gp_approximation_api.Controllers
@@ -25,16 +21,25 @@ namespace gp_approximation_api.Controllers
         }
 
         [HttpPost("api/[controller]")]
-        public async Task<IActionResult> Create([FromForm] IFormFile file, [FromForm] string algorithmParams)
+        public async Task<IActionResult> Create([FromForm] IFormFile dataFile, [FromForm] string algorithmParams)
         {
-            IFormFile receivedFile = file;
 
-            var deserializedParams = JsonSerializer.Deserialize<AlgorithmParams>(algorithmParams);
 
-            var datafilePath = await _datafileManager.SaveFile(receivedFile);
-            var taskGuid =  _approximationTaskManager.CreateTask(datafilePath);
+            try
+            {
+                var deserializedParams = JsonSerializer.Deserialize<AlgorithmParams>(algorithmParams);
+            }
+            catch (Exception)
+            {
 
-            Task.Run(() => _approximationTaskManager.RunTask(taskGuid));
+            }
+
+            var newTaskGuid = Guid.NewGuid();
+
+            var datafilePath = await _datafileManager.SaveFile(newTaskGuid, dataFile);
+            var taskGuid =  _approximationTaskManager.CreateTask(newTaskGuid, datafilePath);
+
+            _approximationTaskManager.RunTask(taskGuid);
 
             return Ok(new { taskGuid, progress = 1 });
         }

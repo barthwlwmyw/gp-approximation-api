@@ -1,4 +1,5 @@
 ﻿using System;
+using gp_approximation_api.Model;
 using gp_approximation_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
