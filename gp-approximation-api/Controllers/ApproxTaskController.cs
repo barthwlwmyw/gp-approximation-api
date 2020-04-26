@@ -28,7 +28,6 @@ namespace gp_approximation_api.Controllers
                 var deserializedParams = JsonSerializer.Deserialize<AlgorithmParams>(algorithmParams);
 
                 var newTaskGuid = Guid.NewGuid();
-
                 var datafilePath = await _datafileManager.SaveFile(newTaskGuid, dataFile);
                 var taskGuid = _approximationTaskManager.CreateTask(newTaskGuid, datafilePath, deserializedParams);
 

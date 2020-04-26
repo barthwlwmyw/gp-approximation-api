@@ -9,5 +9,6 @@ namespace gp_approximation_api.Model
         public string DataFilePath { get; set; }
         public bool IsDone { get; set; }
         public AlgorithmParams AlgorithmParams { get; set; }
+        public ApproximationTaskResult Result { get; set; }
     }
 }
