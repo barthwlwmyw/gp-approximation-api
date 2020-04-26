@@ -8,5 +8,6 @@ namespace gp_approximation_api.Model
         public int TaskProgress { get; set; }
         public string DataFilePath { get; set; }
         public bool IsDone { get; set; }
+        public AlgorithmParams AlgorithmParams { get; set; }
     }
 }

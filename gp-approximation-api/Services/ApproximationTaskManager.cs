@@ -11,7 +11,7 @@ namespace gp_approximation_api.Services
 {
     public interface IApproximationTaskManager
     {
-        Guid CreateTask(Guid taskGuid, string dataFilePath);
+        Guid CreateTask(Guid taskGuid, string dataFilePath, AlgorithmParams algorithmParams);
         void RunTask(Guid taskGuid);
         IList<ApproximationTask> GetTasks();
         ApproximationTask GetTask(Guid taskGuid);
@@ -34,9 +34,14 @@ namespace gp_approximation_api.Services
             _taskRepository = taskRepository;
         }
 
-        public Guid CreateTask(Guid taskGuid, string dataFilePath)
+        public Guid CreateTask(Guid taskGuid, string dataFilePath, AlgorithmParams algorithmParams)
         {
-            var newTask = new ApproximationTask { TaskGuid = taskGuid, DataFilePath = dataFilePath };
+            var newTask = new ApproximationTask { 
+                TaskGuid = taskGuid, 
+                DataFilePath = dataFilePath,
+                AlgorithmParams = algorithmParams,
+                TaskProgress = 1
+            };
 
             _taskRepository.AddTask(newTask);
 
@@ -59,7 +64,8 @@ namespace gp_approximation_api.Services
                 UpdateTaskStatus,
                 FinalizeTask,
                 taskGuid,
-                task.DataFilePath));
+                task.DataFilePath,
+                task.AlgorithmParams));
         
         }
 

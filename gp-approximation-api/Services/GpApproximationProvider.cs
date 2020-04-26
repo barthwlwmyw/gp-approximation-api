@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using gp_approximation_api.Model;
 using gp_approximation_api.Utils;
 
 namespace gp_approximation_api.Services
@@ -11,7 +12,8 @@ namespace gp_approximation_api.Services
             OnApproximationProgressUpdateCallback onProgressUpdate, 
             OnApproximationFinishedCallback onApproximationFinished,
             Guid taskGuid,
-            string datafilePath);
+            string datafilePath,
+            AlgorithmParams algorithmParams);
     }
     public class ApproximationProvider : IApproximationProvider
     {
@@ -19,13 +21,18 @@ namespace gp_approximation_api.Services
             OnApproximationProgressUpdateCallback onProgressUpdate, 
             OnApproximationFinishedCallback onApproximationFinished,
             Guid taskGuid,
-            string datafilePath)
+            string datafilePath,
+            AlgorithmParams algorithmParams)
         {
             StartApproximation(
                 onProgressUpdate,
                 onApproximationFinished,
                 taskGuid.ToString(),
-                datafilePath);
+                datafilePath,
+                algorithmParams.PopulationSize,
+                algorithmParams.GenerationsNumber,
+                algorithmParams.CrossoverProbability,
+                algorithmParams.MutationProbability);
         }
 
         [DllImport(@"gp-approximation-engine.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "callback_test")]
@@ -33,6 +40,10 @@ namespace gp_approximation_api.Services
             [MarshalAs(UnmanagedType.FunctionPtr)]OnApproximationProgressUpdateCallback onProgressUpdate,
             [MarshalAs(UnmanagedType.FunctionPtr)]OnApproximationFinishedCallback onApproximationFinished,
             [MarshalAs(UnmanagedType.LPStr)] string taskGuid,
-            [MarshalAs(UnmanagedType.LPStr)] string datafilePath);
+            [MarshalAs(UnmanagedType.LPStr)] string datafilePath,
+            int populationSize,
+            int generationsNumber,
+            double crossoverProbability,
+            double mutationProbability);
     }
 }

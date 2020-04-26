@@ -23,25 +23,23 @@ namespace gp_approximation_api.Controllers
         [HttpPost("api/[controller]")]
         public async Task<IActionResult> Create([FromForm] IFormFile dataFile, [FromForm] string algorithmParams)
         {
-
-
             try
             {
                 var deserializedParams = JsonSerializer.Deserialize<AlgorithmParams>(algorithmParams);
+
+                var newTaskGuid = Guid.NewGuid();
+
+                var datafilePath = await _datafileManager.SaveFile(newTaskGuid, dataFile);
+                var taskGuid = _approximationTaskManager.CreateTask(newTaskGuid, datafilePath, deserializedParams);
+
+                _approximationTaskManager.RunTask(taskGuid);
+
+                return Ok(new { taskGuid, progress = 1 });
             }
             catch (Exception)
             {
-
+                return BadRequest();
             }
-
-            var newTaskGuid = Guid.NewGuid();
-
-            var datafilePath = await _datafileManager.SaveFile(newTaskGuid, dataFile);
-            var taskGuid =  _approximationTaskManager.CreateTask(newTaskGuid, datafilePath);
-
-            _approximationTaskManager.RunTask(taskGuid);
-
-            return Ok(new { taskGuid, progress = 1 });
         }
 
         [HttpGet("api/[controller]/{taskGuid?}")]
