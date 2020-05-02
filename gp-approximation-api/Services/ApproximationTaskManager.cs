@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -69,9 +70,13 @@ namespace gp_approximation_api.Services
         
         }
 
-        private void UpdateTaskStatus(StringBuilder taskGuid, int progress)
+        private void UpdateTaskStatus(StringBuilder taskGuid, int progress, IntPtr evaluatedValues, int evaluatedValuesLength)
         {
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}");
+            var outputs = new double[evaluatedValuesLength];
+
+            Marshal.Copy(evaluatedValues, outputs, 0, evaluatedValuesLength);
+
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, evaluated values: {string.Join(' ', outputs)}");
             _taskRepository.UpdateTaskProgress(Guid.Parse(taskGuid.ToString()), progress);
         }
 
