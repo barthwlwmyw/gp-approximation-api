@@ -10,5 +10,11 @@ namespace gp_approximation_api.Model
         public bool IsDone { get; set; }
         public AlgorithmParams AlgorithmParams { get; set; }
         public ApproximationTaskResult Result { get; set; }
+
+        public ApproximationTask()
+        {
+            AlgorithmParams = new AlgorithmParams();
+            Result = new ApproximationTaskResult();
+        }
     }
 }

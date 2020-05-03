@@ -9,6 +9,7 @@ namespace gp_approximation_api.Repos
     public interface IApproximationTaskRepository
     {
         void AddTask(ApproximationTask task);
+        void UpdateTask(ApproximationTask task);
         ApproximationTask GetApproximationTask(Guid taskGuid);
         List<ApproximationTask> GetAllTasks();
         void UpdateTaskProgress(Guid taskGuid, int progress);
@@ -37,6 +38,12 @@ namespace gp_approximation_api.Repos
         public ApproximationTask GetApproximationTask(Guid taskGuid)
         {
             return _approximationTasks.Single(at => at.TaskGuid == taskGuid);
+        }
+
+        public void UpdateTask(ApproximationTask task)
+        {
+            var taskToUpdate = _approximationTasks.First(at => at.TaskGuid == task.TaskGuid);
+            taskToUpdate = task;
         }
 
         public void UpdateTaskProgress(Guid taskGuid, int progress)

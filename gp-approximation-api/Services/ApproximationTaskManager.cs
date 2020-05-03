@@ -12,7 +12,8 @@ namespace gp_approximation_api.Services
 {
     public interface IApproximationTaskManager
     {
-        Guid CreateTask(Guid taskGuid, string dataFilePath, AlgorithmParams algorithmParams);
+        Guid CreateTask(AlgorithmParams algorithmParams);
+        void AssignSourceFile(Guid taskGuid, string dataFilePath);
         void RunTask(Guid taskGuid);
         IList<ApproximationTask> GetTasks();
         ApproximationTask GetTask(Guid taskGuid);
@@ -35,11 +36,10 @@ namespace gp_approximation_api.Services
             _taskRepository = taskRepository;
         }
 
-        public Guid CreateTask(Guid taskGuid, string dataFilePath, AlgorithmParams algorithmParams)
+        public Guid CreateTask(AlgorithmParams algorithmParams)
         {
             var newTask = new ApproximationTask { 
-                TaskGuid = taskGuid, 
-                DataFilePath = dataFilePath,
+                TaskGuid = Guid.NewGuid(),
                 AlgorithmParams = algorithmParams,
                 TaskProgress = 1
             };
@@ -70,13 +70,29 @@ namespace gp_approximation_api.Services
         
         }
 
-        private void UpdateTaskStatus(StringBuilder taskGuid, int progress, IntPtr evaluatedValues, int evaluatedValuesLength)
+        public void AssignSourceFile(Guid taskGuid, string dataFilePath)
         {
-            var outputs = new double[evaluatedValuesLength];
+            var task = _taskRepository.GetApproximationTask(taskGuid);
 
-            Marshal.Copy(evaluatedValues, outputs, 0, evaluatedValuesLength);
+            task.DataFilePath = dataFilePath;
 
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, evaluated values: {string.Join(' ', outputs)}");
+            _taskRepository.UpdateTask(task);
+        }
+
+        private void UpdateTaskStatus(StringBuilder taskGuid, int progress, IntPtr evaluatedValuesPtr, int evaluatedValuesLength)
+        {
+            var evaluatedValues = new double[evaluatedValuesLength];
+
+            Marshal.Copy(evaluatedValuesPtr, evaluatedValues, 0, evaluatedValuesLength);
+
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, evaluated values: {string.Join(' ', evaluatedValues)}");
+
+            var task = _taskRepository.GetApproximationTask(Guid.Parse(taskGuid.ToString()));
+
+            task.TaskProgress = progress;
+            task.Result.EvaluatedValues = evaluatedValues;
+            task.Result.ValuesNumber = evaluatedValuesLength;
+
             _taskRepository.UpdateTaskProgress(Guid.Parse(taskGuid.ToString()), progress);
         }
 

@@ -9,6 +9,10 @@ namespace gp_approximation_api.Model
     {
         public string BestResult { get; set; }
 
+        public double[] EvaluatedValues { get; set; }
+
+        public int ValuesNumber { get; set; }
+
         public List<AlgorithmProgress> AlgorithmRunMetadata { get; set; }
 
         public ApproximationTaskResult()
