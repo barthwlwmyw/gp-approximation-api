@@ -79,19 +79,20 @@ namespace gp_approximation_api.Services
             _taskRepository.UpdateTask(task);
         }
 
-        private void UpdateTaskStatus(StringBuilder taskGuid, int progress, IntPtr evaluatedValuesPtr, int evaluatedValuesLength)
+        private void UpdateTaskStatus(StringBuilder taskGuid, int progress, IntPtr evaluatedValuesPtr, int evaluatedValuesLength, GenerationMetadata generationMetadata)
         {
             var evaluatedValues = new double[evaluatedValuesLength];
 
             Marshal.Copy(evaluatedValuesPtr, evaluatedValues, 0, evaluatedValuesLength);
 
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, evaluated values: {string.Join(' ', evaluatedValues)}");
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, test struct: {generationMetadata.BestValue}/{generationMetadata.AverageValue}/{generationMetadata.WorstValue}");
 
             var task = _taskRepository.GetApproximationTask(Guid.Parse(taskGuid.ToString()));
 
             task.TaskProgress = progress;
             task.Result.EvaluatedValues = evaluatedValues;
             task.Result.ValuesNumber = evaluatedValuesLength;
+            task.Result.AlgorithmRunMetadata.Add(generationMetadata);
 
             _taskRepository.UpdateTaskProgress(Guid.Parse(taskGuid.ToString()), progress);
         }

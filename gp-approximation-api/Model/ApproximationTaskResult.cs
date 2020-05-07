@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace gp_approximation_api.Model
@@ -13,18 +14,19 @@ namespace gp_approximation_api.Model
 
         public int ValuesNumber { get; set; }
 
-        public List<AlgorithmProgress> AlgorithmRunMetadata { get; set; }
+        public List<GenerationMetadata> AlgorithmRunMetadata { get; set; }
 
         public ApproximationTaskResult()
         {
-            AlgorithmRunMetadata = new List<AlgorithmProgress>();
+            AlgorithmRunMetadata = new List<GenerationMetadata>();
         }
     }
 
-    public class AlgorithmProgress
+    [StructLayout(LayoutKind.Sequential)]
+    public class GenerationMetadata
     {
-        double BestFitnessValue { get; set; }
-        double AverageFitnessValue { get; set; }
-        double WorstFitnessValue { get; set; }
+        public double BestValue { get; set; }
+        public double AverageValue { get; set; }
+        public double WorstValue { get; set; }
     }
 }

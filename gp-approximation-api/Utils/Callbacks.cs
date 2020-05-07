@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gp_approximation_api.Model;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,7 +12,8 @@ namespace gp_approximation_api.Utils
         StringBuilder taskGuid,
         int approximationProgress,
         IntPtr evaluatedValues,
-        int evaluatedValuesLength);
+        int evaluatedValuesLength,
+        GenerationMetadata generationMetadata);
 
     public delegate void OnApproximationFinishedCallback(
         StringBuilder taskGuid);

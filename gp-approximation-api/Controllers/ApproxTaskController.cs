@@ -36,9 +36,9 @@ namespace gp_approximation_api.Controllers
 
                 return Ok(new { taskGuid, progress = 1 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
