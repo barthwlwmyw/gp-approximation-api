@@ -57,10 +57,8 @@ namespace gp_approximation_api.Services
         {
             var task = _taskRepository.GetApproximationTask(taskGuid);
 
-            //TODO: implementation
             _logger.LogDebug($"Approximation task fired, GUID: {taskGuid}");
 
-            //test implementation:
             Task.Run(() => _approximationProvider.Approximate(
                 UpdateTaskStatus,
                 FinalizeTask,
@@ -85,7 +83,7 @@ namespace gp_approximation_api.Services
 
             Marshal.Copy(evaluatedValuesPtr, evaluatedValues, 0, evaluatedValuesLength);
 
-            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid}, test struct: {generationMetadata.BestValue}/{generationMetadata.AverageValue}/{generationMetadata.WorstValue}");
+            Console.WriteLine($"UpdateTaskStatusCalled with progress: {progress}, guid: {taskGuid},struct: {generationMetadata.BestFitness}/{generationMetadata.BestFitnessInGeneration}");
 
             var task = _taskRepository.GetApproximationTask(Guid.Parse(taskGuid.ToString()));
 
@@ -97,10 +95,16 @@ namespace gp_approximation_api.Services
             _taskRepository.UpdateTaskProgress(Guid.Parse(taskGuid.ToString()), progress);
         }
 
-        private void FinalizeTask(StringBuilder taskGuid)
+        private void FinalizeTask(StringBuilder taskGuid, StringBuilder treeFormula)
         {
-            Console.WriteLine($"Finalize task callback called: {taskGuid}");
-            _taskRepository.FinalizeTask(Guid.Parse(taskGuid.ToString()));
+            var taskToFinalize = _taskRepository.GetApproximationTask(Guid.Parse(taskGuid.ToString()));
+
+            taskToFinalize.IsDone = true;
+            taskToFinalize.TaskProgress = 100;
+            taskToFinalize.Result.BestResult = treeFormula.ToString();
+
+            _taskRepository.UpdateTask(taskToFinalize);
+
         }
     }
 }

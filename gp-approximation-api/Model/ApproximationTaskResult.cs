@@ -25,8 +25,7 @@ namespace gp_approximation_api.Model
     [StructLayout(LayoutKind.Sequential)]
     public class GenerationMetadata
     {
-        public double BestValue { get; set; }
-        public double AverageValue { get; set; }
-        public double WorstValue { get; set; }
+        public double BestFitness { get; set; }
+        public double BestFitnessInGeneration { get; set; }
     }
 }

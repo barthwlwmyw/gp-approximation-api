@@ -14,7 +14,9 @@ namespace gp_approximation_api.Controllers
         private readonly IDatafileManager _datafileManager;
         private readonly IApproximationTaskManager _approximationTaskManager;
 
-        public ApproxTaskController(IDatafileManager datafileManager, IApproximationTaskManager approximationTaskManager)
+        public ApproxTaskController(
+            IDatafileManager datafileManager, 
+            IApproximationTaskManager approximationTaskManager)
         {
             _datafileManager = datafileManager;
             _approximationTaskManager = approximationTaskManager;
